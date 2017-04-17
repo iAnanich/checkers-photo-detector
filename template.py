@@ -5,32 +5,36 @@ from matplotlib import pyplot as plt
 from nms import non_max_suppression_fast
 
 
-overlapThresh = 0.1
-threshold = 0.5
+OVERLAP_THRESH = 0.1
+THRESHOLD = 0.6
 
 
-def multiple_template_matching(origin, tmp, matched):
-    img_rgb = cv2.imread(origin)
-    img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-    template = cv2.imread(tmp, 0)
+def multiple_template_matching(origin, tmp):
+    img_gray = cv2.cvtColor(origin, cv2.COLOR_BGR2GRAY)
     w, h = template.shape[::-1]
 
     res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
-    loc = np.where(res >= threshold)
+    loc = np.where(res >= THRESHOLD)
 
     boxes = []
     for pt in zip(*loc[::-1]):
         boxes.append([*pt, pt[0] + w, pt[1] + h])
-    pick = non_max_suppression_fast(np.array(boxes), overlapThresh)
+    pick = non_max_suppression_fast(np.array(boxes), OVERLAP_THRESH)
 
     for (startX, startY, endX, endY) in pick:
-        cv2.rectangle(img_rgb, (startX, startY), (endX, endY), (0, 255, 0), 2)
+        cv2.rectangle(origin, (startX, startY), (endX, endY), (0, 255, 0), 2)
 
-    cv2.imwrite(matched, img_rgb)
+    return origin
 
 
 if __name__ == '__main__':
-    inputName = 'example.jpg'
-    outputName = 'matched.jpg'
-    templateName = 'template.png'
-    multiple_template_matching(inputName, templateName, outputName)
+    origin = cv2.imread('example.jpg')
+    template = cv2.imread('template.jpg', 0)
+    matched = multiple_template_matching(origin, template)
+    cv2.imshow('image', matched)
+    k = cv2.waitKey(0)
+    if k == 27:  # wait for ESC key to exit
+        cv2.destroyAllWindows()
+    elif k == 1048691:  # wait for 's' key to save and exit
+        cv2.imwrite('sample-2.png', matched)
+        cv2.destroyAllWindows()
