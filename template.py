@@ -11,9 +11,9 @@ THRESHOLD = 0.6
 
 def multiple_template_matching(origin, tmp):
     img_gray = cv2.cvtColor(origin, cv2.COLOR_BGR2GRAY)
-    w, h = template.shape[::-1]
+    w, h = tmp.shape[::-1]
 
-    res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+    res = cv2.matchTemplate(img_gray, tmp, cv2.TM_CCOEFF_NORMED)
     loc = np.where(res >= THRESHOLD)
 
     boxes = []
