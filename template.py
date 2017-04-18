@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from nms import non_max_suppression_fast
+from sample import show_or_save
 
 
 OVERLAP_THRESH = 0.1
@@ -31,10 +32,4 @@ if __name__ == '__main__':
     origin = cv2.imread('example.jpg')
     template = cv2.imread('template.jpg', 0)
     matched = multiple_template_matching(origin, template)
-    cv2.imshow('image', matched)
-    k = cv2.waitKey(0)
-    if k == 27:  # wait for ESC key to exit
-        cv2.destroyAllWindows()
-    elif k == 1048691:  # wait for 's' key to save and exit
-        cv2.imwrite('sample-2.png', matched)
-        cv2.destroyAllWindows()
+    show_or_save(matched, name='matched', file='sample-3.jpg')
